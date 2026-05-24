@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Star, Calendar, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ReminderModal = ({ isOpen, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
@@ -95,19 +97,22 @@ const ReminderModal = ({ isOpen, onClose, onSuccess }) => {
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10">
                                 <Calendar size={16} />
                             </div>
-                            <input
-                                type="date"
-                                value={formData.due_date}
-                                min={getMinDate()}
-                                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                                className="w-full pl-9 pr-2 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm"
-                                style={{
-                                    display: 'block',
-                                    width: '100%',
-                                    minWidth: '140px',
-                                    boxSizing: 'border-box'
+                            <DatePicker
+                                selected={formData.due_date ? new Date(formData.due_date) : null}
+                                onChange={(date) => {
+                                    if (date) {
+                                        const year = date.getFullYear();
+                                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                                        const day = String(date.getDate()).padStart(2, '0');
+                                        setFormData({ ...formData, due_date: `${year}-${month}-${day}` });
+                                    }
                                 }}
-                                required
+                                minDate={new Date()}
+                                dateFormat="yyyy-MM-dd"
+                                placeholderText="Pilih tanggal"
+                                className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm"
+                                wrapperClassName="w-full"
+                                popperClassName="z-50"
                             />
                         </div>
                         <div className="flex items-center gap-1.5 mt-1.5">
