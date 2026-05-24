@@ -99,7 +99,7 @@ const ReminderModal = ({ isOpen, onClose, onSuccess }) => {
                                 value={formData.due_date}
                                 min={getMinDate()}
                                 onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                                className="w-full pl-9 pr-2 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm"
+                                className="w-full pl-9 pr-2  py-2.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-sm"
                                 required
                             />
                         </div>
