@@ -6,6 +6,7 @@ import { Eye, EyeOff, UserPlus, CheckCircle, NotebookPen } from 'lucide-react';
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [username, setUsername] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -20,6 +21,16 @@ const Register = () => {
         if (result.success && !result.needVerification) {
             navigate('/login?registered=true');
         }
+    };
+
+    const validateEmail = (email) => {
+        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!regex.test(email)) {
+            setEmailError('Email tidak valid (contoh: nama@domain.com)');
+            return false;
+        }
+        setEmailError('');
+        return true;
     };
 
     return (
@@ -57,11 +68,17 @@ const Register = () => {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    validateEmail(e.target.value);
+                                }}
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                 placeholder="hello@example.com"
                                 required
                             />
+                            {emailError && (
+                                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                            )}
                         </div>
 
                         <div>

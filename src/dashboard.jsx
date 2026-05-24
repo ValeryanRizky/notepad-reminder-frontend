@@ -26,6 +26,7 @@ const Dashboard = () => {
     const [filter, setFilter] = useState('all');
     const [viewMode, setViewMode] = useState('list');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const initNotification = async () => {
@@ -107,13 +108,22 @@ const Dashboard = () => {
     };
 
     const filteredReminders = reminders.filter(r => {
-        if (filter === 'urgent') return r.is_urgent;
+        if (filter === 'urgent' && !r.is_urgent) return false;
         if (filter === 'upcoming') {
             const daysLeft = getDaysLeft(r.due_date);
-            return daysLeft <= 3 && daysLeft >= 0;
+            if (!(daysLeft <= 3 && daysLeft >= 0)) return false;
         }
-        if (filter === 'pending') return !r.is_notified;
-        if (filter === 'completed') return r.is_notified;
+        if (filter === 'pending' && r.is_notified) return false;
+        if (filter === 'completed' && !r.is_notified) return false;
+
+        if (searchTerm.trim() !== '') {
+            const searchLower = searchTerm.toLowerCase();
+            return (
+                r.title.toLowerCase().includes(searchLower) ||
+                (r.description && r.description.toLowerCase().includes(searchLower))
+            );
+        }
+
         return true;
     });
 
@@ -147,18 +157,23 @@ const Dashboard = () => {
                         </div>
 
                         <div className="flex items-center gap-2 sm:gap-4">
-                            <button className="hidden sm:block p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all">
-                                <Search size={18} className="text-gray-600" />
-                            </button>
                             <div className="relative">
-                                <button className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all relative">
-                                    <Bell size={18} className="text-gray-600" />
-                                    {pendingNotifications > 0 && (
-                                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-full text-[10px] flex items-center justify-center text-white">
-                                            {pendingNotifications}
-                                        </span>
-                                    )}
-                                </button>
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    placeholder="Cari reminder..."
+                                    className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64"
+                                />
+                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                {searchTerm && (
+                                    <button
+                                        onClick={() => setSearchTerm('')}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
                             </div>
 
                             <div className="h-6 sm:h-8 w-px bg-gray-200 hidden sm:block"></div>
@@ -348,7 +363,7 @@ const Dashboard = () => {
                                                     <Calendar size={10} />
                                                     {new Date(reminder.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                                 </span>
-                                                <button onClick={() => handleDeleteReminder(reminder.id)} className="p-1 text-gray-400 hover:text-red-500">
+                                                <button onClick={() => handleDeleteReminder(reminder.id)} className="p-2 text-gray-400 hover:text-red-500 transition-all duration-200 rounded-lg hover:bg-red-50 shrink-0">
                                                     <Trash2 size={12} />
                                                 </button>
                                             </div>

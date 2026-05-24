@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
@@ -28,6 +29,16 @@ const Login = () => {
         if (result.success) {
             navigate('/dashboard');
         }
+    };
+
+    const validateEmail = (email) => { // ← TAMBAHKAN INI
+        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!regex.test(email)) {
+            setEmailError('Email tidak valid (contoh: nama@domain.com)');
+            return false;
+        }
+        setEmailError('');
+        return true;
     };
 
     return (
@@ -52,11 +63,18 @@ const Login = () => {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => {
+                                    setEmail(e.target.value)
+                                    validateEmail(e.target.value);
+                                }}
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                 placeholder="your@email.com"
                                 required
                             />
+                            {emailError && ( // ← TAMBAHKAN INI (untuk tampilkan error)
+                                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                            )}
                         </div>
 
                         <div>
@@ -87,9 +105,7 @@ const Login = () => {
                                 <input type="checkbox" className="rounded border-gray-300 text-blue-500 focus:ring-blue-500" />
                                 Remember me
                             </label>
-                            <a href="#" className="text-sm text-blue-500 hover:text-blue-600 transition">
-                                Forgot Password?
-                            </a>
+                           
                         </div>
 
                         <button
