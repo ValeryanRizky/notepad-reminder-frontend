@@ -67,7 +67,6 @@ const Login = () => {
                                     setEmail(e.target.value)
                                     validateEmail(e.target.value);
                                 }}
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                 placeholder="your@email.com"
                                 required
